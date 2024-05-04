@@ -1,0 +1,42 @@
+import numpy as np
+from sympy import lambdify, sqrt
+
+# Define equilibrium values
+pxe = 0.0
+pye = 0.0
+pze = 0.0
+psie = 0.0
+thetae = 0.0
+phie = 0.0
+vxe = 1.0
+vye = 1.0
+vze = 1.0
+wxe = 0.0
+wye = 0.0
+wze = 0.0
+
+w1e = sqrt((9.81 * m) / (4 * k))
+w2e = w1e
+w3e = w1e
+w4e = w1e
+
+# Define symbolic Jacobians and convert to numerical functions
+A_jac = f.jacobian([p_x, p_y, p_z, psi, theta, phi, v_x, v_y, v_z, w_x, w_y, w_z])
+B_jac = f.jacobian([w1, w2, w3, w4])
+
+A_num = lambdify([p_x, p_y, p_z, psi, theta, phi, v_x, v_y, v_z, w_x, w_y, w_z, w1, w2, w3, w4], A_jac)
+B_num = lambdify([p_x, p_y, p_z, psi, theta, phi, v_x, v_y, v_z, w_x, w_y, w_z, w1, w2, w3, w4], B_jac)
+
+# Evaluate Jacobians at equilibrium points to get matrices A and B
+A = A_num(pxe, pye, pze, psie, thetae, phie, vxe, vye, vze, wxe, wye, wze, w1e, w2e, w3e, w4e)
+B = B_num(pxe, pye, pze, psie, thetae, phie, vxe, vye, vze, wxe, wye, wze, w1e, w2e, w3e, w4e)
+
+# Convert matrices to numpy arrays with float dtype
+A = np.array(A, dtype=float)
+B = np.array(B, dtype=float)
+
+# Print matrices A and B
+print('A =')
+print(A)
+print('B =')
+print(B)
